@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { FlatList, Text, View } from 'react-native';
+import { Button, FlatList, Text, View } from 'react-native';
 
+import { vibrate } from 'expo-vibration';
+ 
 const PAGE_SIZE = 10;
 
 export default function BadScrollExample() {
@@ -32,8 +34,6 @@ export default function BadScrollExample() {
     fetchData(page);
   }, []);
 
-  console.log('re renderizado');
-
   // No utilices useEffect si es un evento directo
   /* useEffect(() => {
     fetchData(page);
@@ -56,12 +56,18 @@ export default function BadScrollExample() {
   ), [])
 
   return (
-    <FlatList
+    <>
+      <FlatList
         data={data}
         keyExtractor={(item, index) => `post-item-${item.id}-${index}`}
         renderItem={renderItem}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
-    />
+      />
+      <Button title="Test vibration" onPress={() => {
+        vibrate(100);
+      }}  />
+    </>
+
   );
 }

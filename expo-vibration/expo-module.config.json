@@ -1,0 +1,10 @@
+{
+  "name": "ExpoVibration",
+  "platforms": ["apple", "android", "web"],
+  "apple": {
+    "modules": ["ExpoVibrationModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.vibration.ExpoVibrationModule"]
+  }
+}
