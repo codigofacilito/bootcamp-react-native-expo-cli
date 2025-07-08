@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button, FlatList, Text, View } from 'react-native';
 
-import { vibrate } from 'expo-vibration';
+// import { hasVibrator } from 'expo-vibration';
  
 const PAGE_SIZE = 10;
 
@@ -65,7 +65,7 @@ export default function BadScrollExample() {
         onEndReachedThreshold={0.5}
       />
       <Button title="Test vibration" onPress={() => {
-        vibrate(100);
+       // hasVibrator();
       }}  />
     </>
 
