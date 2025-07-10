@@ -1,65 +1,138 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { Alert, Button, ScrollView, StatusBar, StyleSheet } from 'react-native';
 
 import { HelloWave } from '@/src/components/HelloWave';
-import ParallaxScrollView from '@/src/components/ParallaxScrollView';
 import { ThemedText } from '@/src/components/ThemedText';
 import { ThemedView } from '@/src/components/ThemedView';
+import * as ImagePicker from 'expo-image-picker';
+import * as ExpoLocation from 'expo-location';
+import { useEffect, useState } from 'react';
+
+const defaultPickerPreferences: ImagePicker.ImagePickerOptions = {
+  mediaTypes: ['images'],
+  allowsEditing: true,
+  aspect: [4, 3],
+  quality: 0.7
+};
 
 export default function HomeScreen() {
+  const [permissionsGranted, setPermisionsGranted] = useState(false);
+  const [imageSelected, setImageSelected] = useState('');
+  const [uploading, setUploading] = useState(false);
+
+  const requestPermissions = async () => {
+    try {
+      const cameraPermission = await ImagePicker.requestCameraPermissionsAsync();
+      const mediaLibraryPermission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const locationPermission = await ExpoLocation.requestForegroundPermissionsAsync();
+
+      if (cameraPermission.status === 'granted' && mediaLibraryPermission.status === 'granted' && locationPermission.status === 'granted') {
+        setPermisionsGranted(true);
+      } else { 
+        Alert.alert(
+          'Permisos necesarios',
+          'La app necesita permisos de cámara, galería y ubicación para funcionar correctamente'
+        );
+      }
+    } catch (error) {
+      console.error(`Error al solicitar permisos: ${error}`);
+    }
+  };
+
+  useEffect(() => {
+    requestPermissions();
+  }, []);
+
+    if (!permissionsGranted) {
+    return (
+      <ThemedView style={styles.container}>
+        <ThemedText>Solicitando permisos...</ThemedText>
+        <Button onPress={requestPermissions} title="Conceder Permisos" />
+      </ThemedView>
+    );
+  }
+  
+  const handleOpenGalleryPress = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync(defaultPickerPreferences);
+
+      if (!result.canceled) {
+        setImageSelected(result.assets[0].uri);
+      }
+    } catch (error) {
+      console.error('Error al seleccionar la imagen: ', error);
+      Alert.alert('Error', 'No se pudo seleccionar la imagen. Por favor, intenta de nuevo.');
+    }
+  };
+
+  const handleTakePhotoPress = async () => {
+    try {
+      const result = await ImagePicker.launchCameraAsync(defaultPickerPreferences);
+
+      if (!result.canceled) {
+        setImageSelected(result.assets[0].uri);
+      }
+    } catch (error) {
+      console.error(`Error al tomar la foto: ${error}`);
+      Alert.alert('Error', 'No se pudo tomar la foto. Por favor, intenta de nuevo.');
+    }
+  };
+
+  const handleUploadPhotoPress = async () => {
+    setUploading(true);
+
+    setTimeout(async () => {
+      const currentLocation = await ExpoLocation.getCurrentPositionAsync({});
+      console.log('Ubicación actual:', currentLocation);
+      setUploading(false);
+      console.log('Imagen subida:', imageSelected);
+      Alert.alert('Carga Realizada', 'Se ha subido la imagen en tus favoritos');
+      setImageSelected('');
+    }, 2000);
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/src/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
+    <ScrollView style={styles.container}>
+      <StatusBar />
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
+        <ThemedText type="title">Galery Uploader</ThemedText>
         <HelloWave />
       </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
+      <ThemedView style={styles.buttonsContainer}>
+        <ThemedView style={styles.uploadBtnContainer}>
+          <Button title="Tomar foto" onPress={handleTakePhotoPress} disabled={uploading} />
+        </ThemedView>
+        <ThemedView style={styles.openGalleryBtnContainer}>
+          <Button title="Abrir Galeria" onPress={handleOpenGalleryPress} disabled={uploading} />
+        </ThemedView>
       </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
+      <ThemedView style={styles.imageContainer}>
+        {imageSelected.length > 0 ? (
+          <>
+            <Image source={{ uri: imageSelected }} style={styles.imageSelected} />
+            <Button 
+              title={uploading ? "Subiendo..." : "Subir Foto"}
+              onPress={handleUploadPhotoPress}
+              disabled={uploading}
+            />
+          </>
+        ): undefined}
       </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingHorizontal: 8,
+    paddingVertical: 14,
+  },
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    marginBottom: 14,
+    marginTop: 14
   },
   stepContainer: {
     gap: 8,
@@ -72,4 +145,21 @@ const styles = StyleSheet.create({
     left: 0,
     position: 'absolute',
   },
+  buttonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center'
+  },
+  uploadBtnContainer: {
+
+  },
+  openGalleryBtnContainer: {
+    marginLeft: 8
+  },
+  imageSelected: {
+    width: '100%',
+    height: 200
+  },
+  imageContainer: {
+    marginTop: 14
+  }
 });

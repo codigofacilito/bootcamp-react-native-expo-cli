@@ -36,6 +36,19 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "La aplicación necesita acceso a tus fotos para seleccionar imágenes.",
+          "cameraPermission": "La aplicación necesita acceso a tu cámara para tomar fotos."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "La aplicación necesita acceso a tu ubicación para guardar la foto con ubicacion."
+        }
       ]
     ],
     "experiments": {
