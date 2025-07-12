@@ -49,7 +49,14 @@
         {
           "locationAlwaysAndWhenInUsePermission": "La aplicación necesita acceso a tu ubicación para guardar la foto con ubicacion."
         }
-      ]
+      ], 
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Allow $(PRODUCT_NAME) to use Face ID."
+        }
+      ],
+      "@react-native-google-signin/google-signin"
     ],
     "experiments": {
       "typedRoutes": true
