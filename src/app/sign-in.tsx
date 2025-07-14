@@ -1,6 +1,6 @@
 import {
-    GoogleSignin,
-    GoogleSigninButton
+  GoogleSignin,
+  GoogleSigninButton
 } from '@react-native-google-signin/google-signin';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { View } from 'react-native';
@@ -10,7 +10,7 @@ import { useSession } from '@/src/stores/ctx';
 import { useEffect } from 'react';
 
 export default function SignIn() {
-  const { signIn } = useSession();
+  const { signIn, } = useSession();
 
   useEffect(() => {
     GoogleSignin.configure({

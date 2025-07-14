@@ -19,6 +19,7 @@
     "@react-navigation/native": "^7.1.6",
     "@supabase/supabase-js": "^2.50.5",
     "axios": "^1.10.0",
+    "base64-arraybuffer": "^1.0.2",
     "expo": "~53.0.15",
     "expo-blur": "~14.1.5",
     "expo-constants": "~17.1.6",
