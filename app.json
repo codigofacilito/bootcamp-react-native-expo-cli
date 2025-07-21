@@ -19,7 +19,9 @@
       },
       "edgeToEdgeEnabled": true,
       "package": "com.juanortiz10.miprimeraappenexpocf",
-      "permissions": ["android.permission.VIBRATE"]
+      "permissions": [
+        "android.permission.VIBRATE"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -49,7 +51,10 @@
         {
           "locationAlwaysAndWhenInUsePermission": "La aplicación necesita acceso a tu ubicación para guardar la foto con ubicacion."
         }
-      ]
+      ],
+      "expo-secure-store",
+      "@react-native-google-signin/google-signin",
+      "expo-local-authentication"
     ],
     "experiments": {
       "typedRoutes": true
