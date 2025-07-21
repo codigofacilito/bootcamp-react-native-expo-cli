@@ -8,7 +8,7 @@ type ChatResponseProps = {
 const ChatResponse: FC<ChatResponseProps> = ({ response }) => {
     return (
         <View style={styles.container}>
-            <Text style={styles.message}>{response}</Text>
+            {response && <Text style={styles.message}>{response}</Text>}
         </View>
     );
 };
