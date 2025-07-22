@@ -15,4 +15,9 @@ describe('ChatResponse Component', () => {
         const messageElement = queryByText('');
         expect(messageElement).toBeNull();
     });
+
+    test('matches snapshot', () => {
+        const { toJSON } = render(<ChatResponse response="Snahot test" />);
+        expect(toJSON()).toMatchSnapshot();
+    });
 });

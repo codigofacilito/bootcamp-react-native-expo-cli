@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 
 export default function BadScrollExample() {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Simula una API que devuelve 1000+ elementos
+    setError(null);
+    setLoading(true);
     fetch('https://jsonplaceholder.typicode.com/posts') // simula una respuesta larga
       .then((res) => res.json())
       .then((data) => {
@@ -14,17 +16,30 @@ export default function BadScrollExample() {
         const hugeList = Array(30).fill(data).flat();
         setItems(hugeList);
         setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error fetching items:', err);
+        setError('Error loading items');
+        setLoading(false);
       });
-      // No deberiamos de tener una llamada a la API con muchos elementos
-      // 10 elementos
-      // # 1 Paginacion 
+    // Simula una API que devuelve 1000+ elementos
   }, []);
 
   // Loading es mala practica de UX
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" />
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} testID='loading-indicator'>
+        <View>
+          <Text>Loading items...</Text>
+        </View>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} testID='error-indicator'>
+        <Text>Error loading items</Text>
       </View>
     );
   }
