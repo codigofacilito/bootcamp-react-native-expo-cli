@@ -4,6 +4,8 @@ import { Alert, Button, ScrollView, StatusBar, StyleSheet } from 'react-native';
 import { HelloWave } from '@/src/components/HelloWave';
 import { ThemedText } from '@/src/components/ThemedText';
 import { ThemedView } from '@/src/components/ThemedView';
+import { supabase } from '@/src/utils/supabase';
+import { decode } from "base64-arraybuffer";
 import * as ImagePicker from 'expo-image-picker';
 import * as ExpoLocation from 'expo-location';
 import { useEffect, useState } from 'react';
@@ -12,12 +14,16 @@ const defaultPickerPreferences: ImagePicker.ImagePickerOptions = {
   mediaTypes: ['images'],
   allowsEditing: true,
   aspect: [4, 3],
-  quality: 0.7
+  quality: 0.7,
+  base64: true,
 };
 
 export default function HomeScreen() {
   const [permissionsGranted, setPermisionsGranted] = useState(false);
-  const [imageSelected, setImageSelected] = useState('');
+  const [imageSelected, setImageSelected] = useState<{
+    uri?: string,
+    base64?: string | null
+  }>({});
   const [uploading, setUploading] = useState(false);
 
   const requestPermissions = async () => {
@@ -57,7 +63,10 @@ export default function HomeScreen() {
       const result = await ImagePicker.launchImageLibraryAsync(defaultPickerPreferences);
 
       if (!result.canceled) {
-        setImageSelected(result.assets[0].uri);
+        setImageSelected({
+          uri: result.assets[0].uri,
+          base64: result.assets[0].base64,
+        });
       }
     } catch (error) {
       console.error('Error al seleccionar la imagen: ', error);
@@ -70,7 +79,10 @@ export default function HomeScreen() {
       const result = await ImagePicker.launchCameraAsync(defaultPickerPreferences);
 
       if (!result.canceled) {
-        setImageSelected(result.assets[0].uri);
+        setImageSelected({
+          uri: result.assets[0].uri,
+          base64: result.assets[0].base64,
+        });      
       }
     } catch (error) {
       console.error(`Error al tomar la foto: ${error}`);
@@ -79,16 +91,33 @@ export default function HomeScreen() {
   };
 
   const handleUploadPhotoPress = async () => {
+    if (!imageSelected.base64) {
+      console.error('Error, imagen en base64 no disponible');
+      return;
+    }
+
     setUploading(true);
 
-    setTimeout(async () => {
-      const currentLocation = await ExpoLocation.getCurrentPositionAsync({});
-      console.log('Ubicación actual:', currentLocation);
+    try {
+      const imageName = "imagenTest.jpg";
+      const imageBuffer = decode(imageSelected.base64);
+
+      const { data, error } = await supabase.storage.from("images").upload(imageName, imageBuffer);
+
+      if (error) {
+        console.error(error);
+      }
+
       setUploading(false);
-      console.log('Imagen subida:', imageSelected);
-      Alert.alert('Carga Realizada', 'Se ha subido la imagen en tus favoritos');
-      setImageSelected('');
-    }, 2000);
+      setImageSelected({});
+      console.log(data);
+    } catch (error) {
+      setUploading(false);
+      setImageSelected({});
+      console.error('Ha ocurrido un error al subir la imagen a supabase ', error);
+    }
+    // const currentLocation = await ExpoLocation.getCurrentPositionAsync({});
+    // Alert.alert('Carga Realizada', 'Se ha subido la imagen en tus favoritos');
   };
 
   return (
@@ -107,9 +136,9 @@ export default function HomeScreen() {
         </ThemedView>
       </ThemedView>
       <ThemedView style={styles.imageContainer}>
-        {imageSelected.length > 0 ? (
+        {!!imageSelected?.uri ? (
           <>
-            <Image source={{ uri: imageSelected }} style={styles.imageSelected} />
+            <Image source={{ uri: imageSelected.uri }} style={styles.imageSelected} />
             <Button 
               title={uploading ? "Subiendo..." : "Subir Foto"}
               onPress={handleUploadPhotoPress}

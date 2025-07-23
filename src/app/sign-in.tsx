@@ -4,6 +4,7 @@ import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Button, Text, View } from "react-native";
 import { useSession } from "../state/AuthContext";
+import { supabase } from "../utils/supabase";
 
 const SignIn = () => {
     const { signIn } = useSession();
@@ -38,7 +39,17 @@ const SignIn = () => {
                 return;
             }
 
-            signIn(data?.idToken);
+            const { data: supabaseData, error } = await supabase.auth.signInWithIdToken({
+                provider: 'google',
+                token: data?.idToken
+            });
+
+            if (error) {
+                console.error('Ha ocurrido un error al iniciar sesion en supabase ', error);
+                return;
+            }
+
+            signIn(supabaseData.session.access_token);
             router.push('/(auth)/(tabs)');
         } catch (error) {
             console.error('Ha ocurrido un error con la peticion de Sign In: ', error);
