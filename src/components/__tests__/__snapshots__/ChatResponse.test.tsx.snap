@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<ChatResponse/> component Hace match con el snapshoot 1`] = `
+<View
+  style={
+    {
+      "paddingVertical": 2,
+    }
+  }
+>
+  <Text
+    style={
+      {
+        "fontSize": 14,
+      }
+    }
+  >
+    Hola Mundo 2s!
+  </Text>
+</View>
+`;
