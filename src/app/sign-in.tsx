@@ -12,7 +12,7 @@ const SignIn = () => {
 
     useEffect(() => {
         GoogleSignin.configure({
-            webClientId: "TU_WEB_CLIENT_ID_AQUI",
+            webClientId: "912136611396-rcoju8bq3ephqc6di6753su35llffaj5.apps.googleusercontent.com",
         });
     }, []);
 
