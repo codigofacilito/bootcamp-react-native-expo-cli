@@ -18,6 +18,7 @@ describe("<BadScrollExample /> component", () => {
             }
         }
     };
+    
     test("Renderea elementos despues de cargarlos", async () => {
         jest.spyOn(global, "fetch").mockResolvedValue({
             json: jest.fn().mockResolvedValue(Array.from({ length: 30 }, (_, i) => ({

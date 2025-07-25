@@ -12,7 +12,7 @@ const SignIn = () => {
 
     useEffect(() => {
         GoogleSignin.configure({
-            webClientId: "TU_WEB_CLIENT_ID_AQUI",
+            webClientId: "TU_GOOGLE_SIGN_IN",
         });
     }, []);
 
@@ -62,6 +62,7 @@ const SignIn = () => {
             const isEnrolled = await LocalAuthentication.isEnrolledAsync();
 
             if (hasHardware && isEnrolled) {
+
                 const result = await LocalAuthentication.authenticateAsync({
                     promptMessage: "Necesitas confirmar tu identidad para seguir"
                 });
@@ -79,7 +80,6 @@ const SignIn = () => {
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Text style={{ color: 'white', fontSize: 24 }}>Hola React Native</Text>
             {hasUserAccess ? <GoogleSigninButton onPress={handleSignInPress} /> : <Button title="Biometria" onPress={handleBiometricPress} />}
-            
         </View>
     );
 };
