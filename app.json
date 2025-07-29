@@ -20,7 +20,12 @@
       "edgeToEdgeEnabled": true,
       "package": "com.juanortiz10.miprimeraappenexpocf",
       "permissions": [
-        "android.permission.VIBRATE"
+        "android.permission.VIBRATE",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT"
       ]
     },
     "web": {
@@ -58,6 +63,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "03954954-be64-4dc0-837a-523c3dddc0c4"
+      }
     }
   }
 }
